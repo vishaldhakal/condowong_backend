@@ -32,6 +32,7 @@ class City(models.Model):
         ordering = ['name']
 
 
+
 class PreConstruction(models.Model):
 
     STATUS_CHOICES = [
@@ -90,6 +91,8 @@ class PreConstruction(models.Model):
         ]
 
 
+
+
 class PreConstructionImage(models.Model):
     preconstruction = models.ForeignKey(
         PreConstruction, on_delete=models.CASCADE, related_name='image')
@@ -122,7 +125,6 @@ class Event(models.Model):
 
 
 class News(models.Model):
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
     news_title = models.CharField(max_length=1000)
     slug = models.CharField(max_length=1000, blank=True)
     news_thumbnail = models.FileField(blank=True)

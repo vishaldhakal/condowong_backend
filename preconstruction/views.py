@@ -1,19 +1,12 @@
 import re
 from rest_framework import status
-from django.core.mail import send_mail, EmailMultiAlternatives, EmailMessage
-from rest_framework.parsers import JSONParser
+from django.core.mail import EmailMessage
 from django.http.response import JsonResponse
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import HttpResponse
 from rest_framework.decorators import api_view
-from django.conf import settings
 from rest_framework.response import Response
 from .models import Developer, PreConstruction, PreConstructionImage, City, PreConstructionFloorPlan, Event, News, Favourite
 from rest_framework.pagination import PageNumberPagination
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-import json
-import math
-import csv
 from accounts.models import Agent
 import datetime
 from rest_framework import generics
@@ -290,11 +283,6 @@ class NewsListCreateView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        city_data = data.get('city[name]')
-        try:
-            city = City.objects.get(name=city_data)
-        except City.DoesNotExist:
-            return Response({"message": "City not found"}, status=status.HTTP_400_BAD_REQUEST)
 
         print(data.get('news_thumbnail'))
         news_title = data.get('news_title')
@@ -304,7 +292,6 @@ class NewsListCreateView(generics.ListCreateAPIView):
         slug = slugify(news_title)
 
         news = News.objects.create(
-            city=city,
             news_title=news_title,
             news_thumbnail=news_thumbnail,
             news_description=news_description,
@@ -315,11 +302,7 @@ class NewsListCreateView(generics.ListCreateAPIView):
         return Response(serializer.data)
     
     def list(self, request, *args, **kwargs):
-        city = request.GET.get('city')
-        if city:
-            news = News.objects.filter(city__slug=city)
-        else:
-            news = News.objects.all()
+        news = News.objects.all()
         serializer = NewsSerializer(news, many=True)
         return Response(serializer.data)
 
@@ -330,18 +313,13 @@ class NewsRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        city_data = request.data.get('city[name]')
-        try:
-            city = City.objects.get(name=city_data)
-        except City.DoesNotExist:
-            return Response({"message": "City not found"}, status=status.HTTP_400_BAD_REQUEST)
 
         if request.data.get('news_thumbnail'):
             instance.news_thumbnail = request.data.get('news_thumbnail')
         instance.news_title = request.data.get('news_title')
         instance.news_description = request.data.get('news_description')
         instance.news_link = request.data.get('news_link')
-        instance.city = city
+
         if instance.slug != slugify(request.data.get('news_title')):
             if Developer.objects.filter(slug=slugify(request.data.get('news_title'))).exists():
                 instance.slug = slugify(request.data.get('news_title')) + "-" + str(instance.id)
@@ -527,4 +505,3 @@ def ContactFormSubmission(request):
     else:
         return HttpResponse("Not post req")
     
-

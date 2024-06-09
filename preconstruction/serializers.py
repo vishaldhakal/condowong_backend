@@ -103,7 +103,6 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class NewsSerializer(serializers.ModelSerializer):
-    city = CitySerializer()
 
     class Meta:
         model = News
@@ -118,3 +117,4 @@ class FavouriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favourite
         fields = '__all__'
+
