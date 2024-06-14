@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Developer, City, PreConstruction, PreConstructionImage, PreConstructionFloorPlan, Event, News, Favourite
+from .models import Developer, City, PreConstruction, PreConstructionImage, PreConstructionFloorPlan, Event, News, Favourite,NewsCategory
 from accounts.serializers import AgentSerializer
 
 
@@ -101,8 +101,12 @@ class EventSerializer(serializers.ModelSerializer):
         fields = '__all__'
         ordering = ['event_date']
 
-
+class NewsCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsCategory
+        fields = '__all__'
 class NewsSerializer(serializers.ModelSerializer):
+    news_category = NewsCategorySerializer()
 
     class Meta:
         model = News

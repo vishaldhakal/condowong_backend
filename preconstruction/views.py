@@ -286,13 +286,17 @@ class NewsListCreateView(generics.ListCreateAPIView):
 
         print(data.get('news_thumbnail'))
         news_title = data.get('news_title')
+        news_category = data.get('news_category')
         news_thumbnail = data.get('news_thumbnail')
         news_description = data.get('news_description')
         news_link = data.get('news_link')
         slug = slugify(news_title)
 
+        ncat = NewsCategory.objects.get(name=news_category)
+
         news = News.objects.create(
             news_title=news_title,
+            news_category=ncat,
             news_thumbnail=news_thumbnail,
             news_description=news_description,
             news_link=news_link,
@@ -313,11 +317,14 @@ class NewsRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+        news_category = NewsCategory.objects.get(
+            name=request.data.get('news_category'))
 
         if request.data.get('news_thumbnail'):
             instance.news_thumbnail = request.data.get('news_thumbnail')
         instance.news_title = request.data.get('news_title')
         instance.news_description = request.data.get('news_description')
+        instance.news_category = news_category
         instance.news_link = request.data.get('news_link')
 
         if instance.slug != slugify(request.data.get('news_title')):
@@ -505,3 +512,10 @@ def ContactFormSubmission(request):
     else:
         return HttpResponse("Not post req")
     
+class NewsCategoryListCreateView(generics.ListCreateAPIView):
+    queryset = NewsCategory.objects.all()
+    serializer_class = NewsCategorySerializer
+
+class NewsCategoryRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = NewsCategory.objects.all()
+    serializer_class = NewsCategorySerializer

@@ -123,9 +123,15 @@ class Event(models.Model):
     def __str__(self):
         return self.event_title
 
+class NewsCategory(models.Model):
+    name = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.name
 
 class News(models.Model):
     news_title = models.CharField(max_length=1000)
+    news_category = models.ForeignKey(NewsCategory, on_delete=models.CASCADE,null=True,blank=True)
     slug = models.CharField(max_length=1000, blank=True)
     news_thumbnail = models.FileField(blank=True)
     news_description = SummernoteTextField(blank=True)
