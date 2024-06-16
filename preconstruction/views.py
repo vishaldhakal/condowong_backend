@@ -286,7 +286,7 @@ class NewsListCreateView(generics.ListCreateAPIView):
 
         print(data.get('news_thumbnail'))
         news_title = data.get('news_title')
-        news_category = data.get('news_category')
+        news_category = data.get('news_category[name]')
         news_thumbnail = data.get('news_thumbnail')
         news_description = data.get('news_description')
         news_link = data.get('news_link')
@@ -318,7 +318,7 @@ class NewsRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         news_category = NewsCategory.objects.get(
-            name=request.data.get('news_category'))
+            name=request.data.get('news_category[name]'))
 
         if request.data.get('news_thumbnail'):
             instance.news_thumbnail = request.data.get('news_thumbnail')
