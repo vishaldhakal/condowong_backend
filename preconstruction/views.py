@@ -104,7 +104,7 @@ class PreConstructionListCreateView(generics.ListCreateAPIView):
         description = data.get('predata[description]')
         price_starting_from = data.get('predata[price_starting_from]')
         price_to = data.get('predata[price_to]')
-        beds = data.get('predata[beds')
+        beds = data.get('predata[beds]')
         baths = data.get('predata[baths]')
         area = data.get('predata[area]')
 
