@@ -36,43 +36,32 @@ class City(models.Model):
 class PreConstruction(models.Model):
 
     STATUS_CHOICES = [
-        ("Upcoming", "Upcoming"),
-        ("Selling", "Selling"),
-        ("Archived", "Archived"),
-        ("Planning Phase", "Planning Phase"),
-        ("Sold out", "Sold out")
+        ("Rent", "Rent"),
+        ("Sell", "Sell"),
     ]
 
-    ASSIGNMENT_CHOICES = [
-        ("Free", "Free"),
-        ("Not Available", "Not Available"),
-        ("Available With Fee", "Available With Fee")
-    ]
     PROJECT_CHOICES = [
-        ("Condo", "Condo"),
-        ("Townhome", "Townhome"),
-        ("Semi-Detached", "Semi-Detached"),
-        ("Detached", "Detached"),
-        ("NaN", "NaN"),
+        ("Apartment", "Apartment"),
+        ("Villa", "Villa"),
     ]
 
     developer = models.ForeignKey(Developer, on_delete=models.CASCADE)
-    occupancy = models.CharField(max_length=500)
-    no_of_units = models.CharField(max_length=500)
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     project_name = models.CharField(max_length=500)
     slug = models.CharField(max_length=1000, unique=True)
     price_starting_from = models.FloatField(default=0)
     price_to = models.FloatField(default=0)
     project_type = models.CharField(
-        max_length=500, choices=PROJECT_CHOICES, default="NaN")
+        max_length=500, choices=PROJECT_CHOICES, default="Apartment")
     description = SummernoteTextField(blank=True)
     project_address = models.CharField(max_length=500)
     status = models.CharField(
-        max_length=500, choices=STATUS_CHOICES, default="Upcoming")
-    co_op_available = models.BooleanField(default=False)
+        max_length=500, choices=STATUS_CHOICES, default="Sale")
     date_of_upload = models.DateField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    beds = models.IntegerField(default=0)
+    baths = models.IntegerField(default=0)
+    area = models.FloatField(default=0)
 
 
     def __str__(self):
@@ -82,9 +71,8 @@ class PreConstruction(models.Model):
         ordering = [
             '-last_updated',
             Case(
-                When(status="Selling", then=Value(1)),
-                When(status="Upcoming", then=Value(2)),
-                When(status="Sold out", then=Value(3)),
+                When(status="Sell", then=Value(1)),
+                When(status="Rent", then=Value(2)),
                 default=Value(4),
                 output_field=IntegerField(),
             ),

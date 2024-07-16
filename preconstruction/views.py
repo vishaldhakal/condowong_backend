@@ -102,12 +102,11 @@ class PreConstructionListCreateView(generics.ListCreateAPIView):
         status = data.get('predata[status]')
         project_address = data.get('predata[project_address]')
         description = data.get('predata[description]')
-        co_op = data.get('predata[co_op_available]')
-        co_op_available = True if co_op == "true" else False
         price_starting_from = data.get('predata[price_starting_from]')
         price_to = data.get('predata[price_to]')
-        occupancy = data.get('predata[occupancy]')
-        no_of_units = data.get('predata[no_of_units]')
+        beds = data.get('predata[beds')
+        baths = data.get('predata[baths]')
+        area = data.get('predata[area]')
 
         """Generate slug from project name with unique in case of same name"""
         slug = slugify(project_name)
@@ -123,11 +122,11 @@ class PreConstructionListCreateView(generics.ListCreateAPIView):
             status=status,
             project_address=project_address,
             description=description,
-            co_op_available=co_op_available,
             price_starting_from=price_starting_from,
             price_to=price_to,
-            occupancy=occupancy,
-            no_of_units=no_of_units
+            beds=beds,
+            baths=baths,
+            area=area
         )
 
         """ Save images from images received """
@@ -164,12 +163,11 @@ class PreConstructionRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIV
         status = data.get('predata[status]')
         project_address = data.get('predata[project_address]')
         description = data.get('predata[description]')
-        co_op = data.get('predata[co_op_available]')
-        co_op_available = True if co_op == "true" else False
         price_starting_from = data.get('predata[price_starting_from]')
         price_to = data.get('predata[price_to]')
-        occupancy = data.get('predata[occupancy]')
-        no_of_units = data.get('predata[no_of_units]')
+        beds = data.get('predata[beds')
+        baths = data.get('predata[baths]')
+        area = data.get('predata[area]')
 
         instance.developer = developer
         instance.city = city
@@ -178,11 +176,11 @@ class PreConstructionRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIV
         instance.status = status
         instance.project_address = project_address
         instance.description = description
-        instance.co_op_available = co_op_available
         instance.price_starting_from = price_starting_from
         instance.price_to = price_to
-        instance.occupancy = occupancy
-        instance.no_of_units = no_of_units
+        instance.beds = beds
+        instance.baths = baths
+        instance.area = area
 
         if instance.slug != slugify(project_name):
             if PreConstruction.objects.filter(slug=slugify(project_name)).exists():
@@ -238,7 +236,7 @@ def PreConstructionDetailView(request, slug):
 
 @api_view(['GET'])
 def PreConstructionsCityView(request, slug):
-    status = request.GET.get('status')
+    status = request.GET.get('status')  # noqa: F811
     page_size = request.GET.get('page_size',60)
     occupancy = request.GET.get('occupancy')
     project_type = request.GET.get('project_type')
